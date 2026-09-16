@@ -1,23 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script>
-/* Captura o evento de instalação o mais cedo possível, antes de
-   qualquer outro script — em navegadores rápidos ele pode disparar
-   antes do fim do carregamento da página, e se o listener for
-   registrado tarde demais o evento se perde e o botão nunca instala
-   automaticamente. */
-window.__pwaInstallEvent = null;
-window.addEventListener("beforeinstallprompt", function(e){
-  e.preventDefault();
-  window.__pwaInstallEvent = e;
-  document.dispatchEvent(new Event("pwaInstallReady"));
-});
-window.addEventListener("appinstalled", function(){
-  window.__pwaInstallEvent = null;
-  document.dispatchEvent(new Event("pwaInstalled"));
-});
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Guaraná do Lype — Delivery</title>
@@ -201,7 +184,7 @@ header.site-header.scrolled{ box-shadow:0 8px 30px -14px rgba(18,3,10,.35); }
    BOTÃO INSTALAR APP
 ============================================================ */
 .install-btn{
-  display:none;
+  display:inline-flex;
   align-items:center; gap:8px;
   padding:0 18px;
   height:46px;
@@ -215,17 +198,17 @@ header.site-header.scrolled{ box-shadow:0 8px 30px -14px rgba(18,3,10,.35); }
   transition:transform .25s var(--ease), box-shadow .25s var(--ease);
   animation:installPulse 2.6s ease-in-out infinite;
 }
-.install-btn.show{ display:inline-flex; }
+.install-btn.hide{ display:none !important; }
 .install-btn:hover{ transform:translateY(-2px); box-shadow:0 14px 30px -10px rgba(255,18,63,.65); }
 .install-btn svg{ width:18px; height:18px; stroke:var(--branco); flex-shrink:0; }
 @keyframes installPulse{
   0%,100%{ box-shadow:0 10px 24px -10px rgba(255,18,63,.55); }
   50%{ box-shadow:0 10px 26px -8px rgba(255,18,63,.85), 0 0 0 6px rgba(255,18,63,.08); }
 }
-@media (max-width: 560px){
+@media (max-width: 640px){
   .install-btn span{ display:none; }
-  .install-btn{ width:46px; height:46px; padding:0; border-radius:50%; justify-content:center; }
-  .install-btn svg{ width:20px; height:20px; }
+  .install-btn{ width:42px; height:42px; padding:0; border-radius:50%; justify-content:center; }
+  .install-btn svg{ width:18px; height:18px; }
 }
 
 /* Modal instruções iOS */
@@ -590,18 +573,31 @@ footer p.desc{ font-size:.88rem; max-width:36ch; line-height:1.6; }
 .bottom-line{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; padding-top:22px; font-size:.78rem; }
 
 /* ============================================================
-   FLOATING WHATSAPP
+   FLOATING CART (no lugar do antigo WhatsApp fixo)
 ============================================================ */
-.fab-whats{
+.fab-cart{
   position:fixed; right:20px; bottom:20px; z-index:70;
   width:60px; height:60px; border-radius:50%;
-  background:linear-gradient(135deg,#22c55e,#128C4A);
+  background:linear-gradient(135deg, var(--vermelho), var(--vermelho-2));
   display:flex; align-items:center; justify-content:center;
-  box-shadow:0 14px 30px -10px rgba(18,140,74,.6);
+  box-shadow:0 14px 30px -10px rgba(255,18,63,.6);
   animation:pop 3s ease-in-out infinite;
+  border:none; cursor:pointer;
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease);
 }
-.fab-whats svg{ width:28px; height:28px; fill:var(--branco); }
+.fab-cart:hover{ transform:translateY(-3px) scale(1.04); }
+.fab-cart svg{ width:26px; height:26px; stroke:var(--branco); }
 @keyframes pop{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.06);} }
+.fab-cart-badge{
+  position:absolute; top:-4px; right:-4px;
+  min-width:22px; height:22px; padding:0 6px;
+  border-radius:20px;
+  background:var(--dourado);
+  color:var(--vinho);
+  font-size:.74rem; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 0 2px var(--creme);
+}
 
 /* ============================================================
    CART DRAWER
@@ -1022,8 +1018,8 @@ header.site-header{
   pointer-events:none;
 }
 
-/* fab whatsapp com anel neon */
-.fab-whats{ box-shadow:0 0 18px rgba(0,224,160,.5), 0 14px 30px -10px rgba(18,3,10,.6); }
+/* fab carrinho com anel neon */
+.fab-cart{ box-shadow:0 0 18px rgba(255,196,0,.5), 0 14px 30px -10px rgba(18,3,10,.6); }
 
 /* carrinho e modais — cabeçalhos com brilho e contorno tech */
 .drawer{ box-shadow:-20px 0 60px rgba(255,18,63,.15), -1px 0 0 rgba(255,196,0,.25); }
@@ -1143,17 +1139,13 @@ footer h6{ text-shadow:0 0 8px rgba(255,196,0,.4); }
       </div>
     </div>
     <div class="header-actions">
-      <button class="install-btn" id="btnInstall" aria-label="Instalar aplicativo" title="Instalar app">
+      <button class="install-btn" id="btnInstall" aria-label="Instalar aplicativo" title="Instalar aplicativo">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
-        <span>Instalar App</span>
+        <span>Instalar aplicativo</span>
       </button>
       <a class="icon-btn" href="#cardapio" aria-label="Ir para o cardápio" title="Cardápio">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
       </a>
-      <button class="icon-btn" id="btnCart" aria-label="Abrir carrinho" title="Carrinho">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
-      </button>
     </div>
   </div>
 </header>
@@ -1305,9 +1297,11 @@ footer h6{ text-shadow:0 0 8px rgba(255,196,0,.4); }
   </div>
 </footer>
 
-<a class="fab-whats" id="fabWhats" href="#" target="_blank" rel="noopener" aria-label="Fale no WhatsApp">
-  <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm5.8 14.07c-.24.68-1.4 1.3-1.93 1.36-.5.06-1.03.29-3.46-.72-2.9-1.2-4.76-4.14-4.9-4.33-.15-.19-1.17-1.56-1.17-2.97 0-1.41.74-2.1 1-2.39.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.42-.07.65.5.24.58.81 2 .88 2.15.07.15.11.32.02.51-.09.19-.14.31-.28.48-.14.16-.29.36-.42.49-.14.13-.28.28-.12.55.15.27.68 1.12 1.46 1.82 1 .9 1.85 1.18 2.12 1.31.27.13.43.11.59-.07.16-.18.68-.79.86-1.06.18-.27.36-.22.6-.13.25.09 1.58.75 1.85.88.27.13.45.19.51.3.07.11.07.62-.17 1.3z"/></svg>
-</a>
+<!-- Botão flutuante: carrinho (no lugar do antigo WhatsApp fixo) -->
+<button class="fab-cart" id="btnCartFab" aria-label="Abrir carrinho" title="Carrinho">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+  <span class="fab-cart-badge" id="cartBadgeFab" style="display:none;">0</span>
+</button>
 
 <!-- OVERLAY -->
 <div class="overlay" id="overlay"></div>
@@ -1502,17 +1496,19 @@ footer h6{ text-shadow:0 0 8px rgba(255,196,0,.4); }
 <div class="ios-install-modal" id="iosInstallModal">
   <div class="bg" id="iosInstallBg"></div>
   <div class="sheet">
-    <h3>📲 Instalar o app na tela de início</h3>
-    <ol>
-      <li>Toque no ícone de <b>Compartilhar</b>
-        <span class="share-ico">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#12030A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 14v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/></svg>
-        </span>
-        na barra do Safari.
-      </li>
-      <li>Role para baixo e toque em <b>"Adicionar à Tela de Início"</b>.</li>
-      <li>Toque em <b>"Adicionar"</b> — pronto! O app aparece igual a um aplicativo normal, com ícone próprio.</li>
-    </ol>
+    <h3 id="iosInstallTitulo">📲 Instalar o app na tela de início</h3>
+    <div id="iosInstallConteudo">
+      <ol>
+        <li>Toque no ícone de <b>Compartilhar</b>
+          <span class="share-ico">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#12030A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 14v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/></svg>
+          </span>
+          na barra do Safari.
+        </li>
+        <li>Role para baixo e toque em <b>"Adicionar à Tela de Início"</b>.</li>
+        <li>Toque em <b>"Adicionar"</b> — pronto! O app aparece igual a um aplicativo normal, com ícone próprio.</li>
+      </ol>
+    </div>
     <button class="fechar-ios" id="iosInstallFechar">Entendi</button>
   </div>
 </div>
@@ -1525,8 +1521,17 @@ const CONFIG = {
   whatsappNumero: "5585999999999",   // <-- troque pelo número real (formato: 55 + DDD + número)
   chavePix: "(85) 9 9999-9999",      // <-- troque pela chave pix real
   enderecoLoja: "Rua Olímpio Ribeiro, 219",
-  horarioAbertura: 17.5,              // 17h30
-  horarioFechamento: 22.5             // 22h30
+  // Horário de funcionamento por dia da semana (0=domingo ... 6=sábado).
+  // Deixe "null" no dia em que a loja não abre.
+  horarios: [
+    null,                         // domingo — fechado
+    { abre: "17:30", fecha: "22:30" }, // segunda
+    { abre: "17:30", fecha: "22:30" }, // terça
+    { abre: "17:30", fecha: "22:30" }, // quarta
+    { abre: "17:30", fecha: "22:30" }, // quinta
+    { abre: "17:30", fecha: "22:30" }, // sexta
+    { abre: "17:30", fecha: "22:30" }  // sábado
+  ]
 };
 
 /* ============================================================
@@ -1610,24 +1615,56 @@ function showToast(msg){
 }
 
 /* ============================================================
-   STATUS DA LOJA (aberto/fechado)
+   STATUS DA LOJA (aberto/fechado) — considera dia da semana e hora
 ============================================================ */
-(function checkLojaStatus(){
+function parseHora(str){
+  const [h, m] = str.split(":").map(Number);
+  return h + m/60;
+}
+const NOMES_DIA = ["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+
+function atualizarStatusLoja(){
   const now = new Date();
-  const diaSemana = now.getDay(); // 0 = domingo
-  const hDecimal = now.getHours() + now.getMinutes()/60;
-  const fechadoHoje = diaSemana === 0; // fechamos aos domingos
-  const dentroDoHorario = hDecimal >= CONFIG.horarioAbertura && hDecimal < CONFIG.horarioFechamento;
-  const aberto = !fechadoHoje && dentroDoHorario;
-  const el = $("#lojaStatus"); const txt = $("#lojaStatusTxt");
-  if(!aberto){
-    el.classList.add("fechado");
-    txt.textContent = "Fechado — abriremos novamente amanhã às 17h30";
+  const diaSemana = now.getDay(); // 0 = domingo ... 6 = sábado
+  const hAtual = now.getHours() + now.getMinutes()/60;
+  const horarioHoje = CONFIG.horarios[diaSemana];
+
+  let aberto = false;
+  let mensagem = "";
+
+  if(horarioHoje){
+    const abre = parseHora(horarioHoje.abre);
+    const fecha = parseHora(horarioHoje.fecha);
+    if(hAtual >= abre && hAtual < fecha){
+      aberto = true;
+      mensagem = `Aberto agora — fecha às ${horarioHoje.fecha}`;
+    } else if(hAtual < abre){
+      mensagem = `Fechado — abrimos hoje às ${horarioHoje.abre}`;
+    }
   }
-})();
+
+  if(!aberto && !mensagem){
+    // loja fechada agora (fora do horário de hoje ou hoje sem funcionamento):
+    // procura o próximo dia com horário de funcionamento
+    for(let i = 1; i <= 7; i++){
+      const proxDia = (diaSemana + i) % 7;
+      const horarioProx = CONFIG.horarios[proxDia];
+      if(horarioProx){
+        const quando = i === 1 ? "amanhã" : NOMES_DIA[proxDia];
+        mensagem = `Fechado — abriremos ${quando} às ${horarioProx.abre}`;
+        break;
+      }
+    }
+  }
+
+  const el = $("#lojaStatus"); const txt = $("#lojaStatusTxt");
+  el.classList.toggle("fechado", !aberto);
+  txt.textContent = mensagem;
+}
+atualizarStatusLoja();
+setInterval(atualizarStatusLoja, 60000); // reavalia a cada minuto, sem precisar recarregar a página
 $("#anoAtual").textContent = new Date().getFullYear();
 $("#footWhats").textContent = "WhatsApp: " + CONFIG.whatsappNumero.replace(/^55(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
-$("#fabWhats").href = "https://wa.me/" + CONFIG.whatsappNumero + "?text=" + encodeURIComponent("Olá! Vim pelo site do Guaraná do Lype 😄");
 $("#chavePix").textContent = CONFIG.chavePix;
 
 /* ============================================================
@@ -1841,11 +1878,13 @@ function cartCount(){ return cart.reduce((s,c)=> s + c.qty, 0); }
 function renderCart(){
   const body = $("#cartBody");
   const foot = $("#cartFoot");
-  const badge = $("#cartBadge");
+  const badgeFab = $("#cartBadgeFab");
 
   const count = cartCount();
-  badge.style.display = count ? "flex" : "none";
-  badge.textContent = count;
+  if(badgeFab){
+    badgeFab.style.display = count ? "flex" : "none";
+    badgeFab.textContent = count;
+  }
 
   if(cart.length === 0){
     body.innerHTML = `<div class="empty-state">
@@ -1887,7 +1926,7 @@ renderCart();
 /* open / close drawer */
 function openCart(){ $("#cartDrawer").classList.add("show"); $("#overlay").classList.add("show"); document.body.style.overflow="hidden"; }
 function closeCart(){ $("#cartDrawer").classList.remove("show"); $("#overlay").classList.remove("show"); document.body.style.overflow=""; }
-$("#btnCart").addEventListener("click", openCart);
+$("#btnCartFab").addEventListener("click", openCart);
 $("#closeCart").addEventListener("click", closeCart);
 $("#overlay").addEventListener("click", ()=>{ closeCart(); closeModal("checkoutModal"); closeModal("itemModal"); });
 
@@ -2104,10 +2143,13 @@ function enviarPedidoWhatsapp(){
     });
   }
 
-  const btnInstall   = document.getElementById("btnInstall");
+  const installButtons = [
+    document.getElementById("btnInstall")
+  ].filter(Boolean);
   const iosModal     = document.getElementById("iosInstallModal");
   const iosBg        = document.getElementById("iosInstallBg");
   const iosFechar    = document.getElementById("iosInstallFechar");
+  let deferredPrompt = null;
 
   const isStandalone = () =>
     window.matchMedia("(display-mode: standalone)").matches ||
@@ -2116,7 +2158,44 @@ function enviarPedidoWhatsapp(){
   const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) ||
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
+  const isAndroid = () => /android/i.test(navigator.userAgent);
+
+  function mostrarBotoesInstall(){
+    installButtons.forEach(btn=> btn.classList.remove("hide"));
+  }
+  function esconderBotoesInstall(){
+    installButtons.forEach(btn=> btn.classList.add("hide"));
+  }
+
   function abrirInstrucoesIOS(){
+    $("#iosInstallTitulo").textContent = "📲 Instalar o app na tela de início";
+    $("#iosInstallConteudo").innerHTML = `
+      <ol>
+        <li>Toque no ícone de <b>Compartilhar</b>
+          <span class="share-ico">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#12030A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 14v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/></svg>
+          </span>
+          na barra do Safari.
+        </li>
+        <li>Role para baixo e toque em <b>"Adicionar à Tela de Início"</b>.</li>
+        <li>Toque em <b>"Adicionar"</b> — pronto! O app aparece igual a um aplicativo normal, com ícone próprio.</li>
+      </ol>`;
+    iosModal.classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
+  function abrirInstrucoesGenericas(){
+    $("#iosInstallTitulo").textContent = "📲 Instalar aplicativo";
+    $("#iosInstallConteudo").innerHTML = isAndroid()
+      ? `<ol>
+          <li>Toque no menu <b>⋮</b> do navegador, no canto superior direito.</li>
+          <li>Escolha a opção <b>"Instalar aplicativo"</b> ou <b>"Adicionar à tela inicial"</b>.</li>
+          <li>Confirme — pronto! O app aparece com ícone próprio, igual a um aplicativo normal.</li>
+        </ol>`
+      : `<ol>
+          <li>Abra o menu do seu navegador (geralmente nos três pontinhos ⋮ ou no ícone de opções).</li>
+          <li>Procure a opção <b>"Instalar aplicativo"</b> ou <b>"Adicionar à tela inicial"</b>.</li>
+          <li>Confirme a instalação — pronto!</li>
+        </ol>`;
     iosModal.classList.add("show");
     document.body.style.overflow = "hidden";
   }
@@ -2127,42 +2206,44 @@ function enviarPedidoWhatsapp(){
   iosFechar && iosFechar.addEventListener("click", fecharInstrucoesIOS);
   iosBg && iosBg.addEventListener("click", fecharInstrucoesIOS);
 
-  if(!isStandalone()){
-    if(isIOS()){
-      /* O Safari/iOS não expõe nenhuma API de instalação automática —
-         é uma restrição da Apple, não do código. "Adicionar à Tela
-         de Início" pelo Compartilhar é o único caminho possível lá. */
-      btnInstall.classList.add("show");
-      btnInstall.addEventListener("click", abrirInstrucoesIOS);
-    } else {
-      /* Chrome / Edge / Android / Samsung Internet — instalação
-         automática de 1 clique via API nativa do navegador. */
-      const ativarBotao = () => btnInstall.classList.add("show");
+  if(isStandalone()){
+    /* já instalado — não precisa mostrar o botão */
+    esconderBotoesInstall();
+  } else {
+    /* deixa o botão visível desde já, pronto para instalar assim que possível */
+    mostrarBotoesInstall();
 
-      // Se o evento já chegou antes deste script rodar, usa direto.
-      if(window.__pwaInstallEvent) ativarBotao();
-      // Senão, espera o evento disparado pelo listener registrado
-      // no <head> (evita perder o prompt em conexões rápidas).
-      document.addEventListener("pwaInstallReady", ativarBotao);
+    /* Chrome / Edge / Android — captura o prompt nativo quando disponível */
+    window.addEventListener("beforeinstallprompt", (e)=>{
+      e.preventDefault();
+      deferredPrompt = e;
+      mostrarBotoesInstall();
+    });
 
-      btnInstall.addEventListener("click", async ()=>{
-        const evt = window.__pwaInstallEvent;
-        if(!evt) return;
-        btnInstall.classList.remove("show");
-        evt.prompt();
-        const { outcome } = await evt.userChoice;
-        if(outcome === "accepted"){
-          showToast("Instalando o app... 🎉");
+    installButtons.forEach(btn=>{
+      btn.addEventListener("click", async ()=>{
+        if(deferredPrompt){
+          // prompt nativo disponível — usa direto
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if(outcome === "accepted"){
+            showToast("Instalando o app... 🎉");
+          }
+          deferredPrompt = null;
+        } else if(isIOS()){
+          // iOS não tem prompt nativo — mostra o passo a passo do Safari
+          abrirInstrucoesIOS();
         } else {
-          btnInstall.classList.add("show");
+          // navegador ainda não liberou o prompt automático — mostra instruções manuais
+          abrirInstrucoesGenericas();
         }
-        window.__pwaInstallEvent = null;
       });
-    }
+    });
   }
 
-  document.addEventListener("pwaInstalled", ()=>{
-    btnInstall.classList.remove("show");
+  window.addEventListener("appinstalled", ()=>{
+    esconderBotoesInstall();
+    deferredPrompt = null;
     showToast("App instalado com sucesso! 🥤");
   });
 
